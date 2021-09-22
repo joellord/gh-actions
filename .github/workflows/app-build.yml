@@ -37,3 +37,38 @@ jobs:
       with:
         branch: gh-pages # The branch the action should deploy to.
         folder: client/build # The folder the action should deploy.
+  build-server:
+    defaults:
+      run: 
+        working-directory: server
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Install and run tests
+      run: |
+        npm install
+        npm run test
+
+    - name: Containerize
+      id: containerize
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: fullstack-day-server
+        tags: v1 ${{ github.sha }}
+        containerfiles: |
+          ./Dockerfile
+
+    - name: Push to registry
+      id: push
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.containerize.outputs.image }}
+        tags: ${{ steps.containerize.outputs.tags }}
+        registry: docker.io/joellord
+        username: joellord
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    
+    - name: Finish
+      run: echo "Image pushed to ${{ steps.push.outputs.registry-paths }}"
