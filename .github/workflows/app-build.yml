@@ -2,6 +2,7 @@ name: GitHub Actions Demo
 on: [push]
 env:
   SITE_DIR: "gh-pages"
+  PUBLIC_URL: "/gh-actions"
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
