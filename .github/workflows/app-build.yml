@@ -58,7 +58,7 @@ jobs:
         image: fullstack-day-server
         tags: v1 ${{ github.sha }}
         containerfiles: |
-          ./Dockerfile
+          ./server/Dockerfile
 
     - name: Push to registry
       id: push
